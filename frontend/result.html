@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Result</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+
+<body>
+
+<!-- Header -->
+<div class="header">
+    Student Performance Analysis
+</div>
+
+<!-- Main Container -->
+<div class="result-container">
+
+    <!-- 📄 WRAP EVERYTHING INSIDE THIS -->
+    <div id="reportContent">
+
+        <!-- Status -->
+        <div id="statusBox" class="status-box"></div>
+
+        <!-- Student Data -->
+        <div class="data-box">
+            <h3>Student Input Data</h3>
+            <div id="studentData"></div>
+        </div>
+
+        <!-- Suggestion -->
+        <div class="suggestion-box">
+            <h3>Suggestions</h3>
+            <p id="suggestion"></p>
+        </div>
+
+        <!-- Chart -->
+        <div class="chart-box">
+            <canvas id="pieChart"></canvas>
+        </div>
+
+    </div>
+
+    <!-- Export Button -->
+    <button onclick="exportPDF()">Export Report</button>
+
+</div>
+
+<script>
+
+// 📦 Get stored result
+let result = JSON.parse(localStorage.getItem("result"));
+
+// 🟥🟨🟩 STATUS
+let statusBox = document.getElementById("statusBox");
+statusBox.innerText = result.status;
+
+if(result.status === "SAFE"){
+    statusBox.style.background = "green";
+}
+else if(result.status === "WARNING"){
+    statusBox.style.background = "orange";
+}
+else{
+    statusBox.style.background = "red";
+}
+
+// 📊 INPUT DATA
+let container = document.getElementById("studentData");
+
+for(let key in result.input){
+    container.innerHTML += `<p><b>${key}</b>: ${result.input[key]}</p>`;
+}
+
+// 💡 SUGGESTION
+document.getElementById("suggestion").innerText = result.suggestion;
+
+// 🥧 PIE CHART
+new Chart(document.getElementById("pieChart"), {
+    type: "pie",
+    data: {
+        labels: ["Safe", "Warning", "At Risk"],
+        datasets: [{
+            data: result.distribution,
+            backgroundColor: ["green","orange","red"]
+        }]
+    }
+});
+
+// 📄 EXPORT PDF (WORKING VERSION)
+async function exportPDF() {
+    const { jsPDF } = window.jspdf;
+
+    const content = document.getElementById("reportContent");
+
+    const canvas = await html2canvas(content, {
+        scale: 2
+    });
+
+    const imgData = canvas.toDataURL("image/png");
+
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    const imgWidth = 210;
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+
+    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+
+    pdf.save("Student_Report.pdf");
+}
+
+</script>
+
+</body>
+</html>

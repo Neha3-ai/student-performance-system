@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Performance Prediction</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    Student Performance Prediction System
+</div>
+
+<!-- Video Background -->
+<video autoplay loop muted playsinline>
+    <source src="assets/bg.mp4" type="video/mp4">
+</video>
+
+<!-- Form Container -->
+<div class="form-container">
+
+    <h2>Enter Student Details</h2>
+
+    <input type="number" id="study_hours" placeholder="Study Hours">
+    <input type="number" id="sleep_hours" placeholder="Sleep Hours">
+    <input type="number" id="play_hours" placeholder="Play Hours">
+    <input type="number" id="attendance" placeholder="Attendance %">
+
+    <button onclick="predict()">Predict</button>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
